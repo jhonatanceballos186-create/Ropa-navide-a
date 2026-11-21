@@ -27,8 +27,8 @@ body{
 .app{
   position:relative;width:100%;max-width:460px;height:100dvh;
   background:var(--bg);
-  background-image:radial-gradient(120% 70% at 50% 45%,rgba(255,255,255,.28),rgba(255,255,255,0) 60%),
-                   radial-gradient(140% 60% at 50% 110%,rgba(0,0,0,.18),rgba(0,0,0,0) 60%);
+  background-image:radial-gradient(70% 45% at 50% 46%,rgba(255,255,255,.30),rgba(255,255,255,0) 70%),
+                   radial-gradient(130% 95% at 50% 46%,rgba(0,0,0,0) 45%,rgba(0,0,0,.30) 100%);
   transition:background-color .8s var(--ease),color .5s;
   overflow:hidden;display:flex;flex-direction:column;
   color:var(--ink);
@@ -68,8 +68,8 @@ header{position:relative;z-index:5;display:flex;align-items:center;justify-conte
 .card.flipped{transform:rotateY(180deg)}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .face.back{transform:rotateY(180deg)}
-.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(0,0,0,.28));user-select:none;-webkit-user-drag:none}
-.shadow{position:absolute;left:50%;bottom:6%;width:52%;height:22px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(0,0,0,.35),rgba(0,0,0,0));animation:shadow 4.5s ease-in-out infinite;z-index:2}
+.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 22px 26px rgba(0,0,0,.32)) drop-shadow(0 4px 6px rgba(0,0,0,.18));user-select:none;-webkit-user-drag:none}
+.shadow{position:absolute;left:50%;bottom:7%;width:62%;height:34px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(0,0,0,.5),rgba(0,0,0,.18) 55%,rgba(0,0,0,0));filter:blur(2px);animation:shadow 4.5s ease-in-out infinite;z-index:2}
 @keyframes shadow{0%,100%{transform:translateX(-50%) scale(1);opacity:.85}50%{transform:translateX(-50%) scale(.82);opacity:.55}}
 
 /* miniatura siguiente */
