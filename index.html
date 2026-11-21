@@ -262,7 +262,9 @@ const saveFavs=()=>{try{localStorage.setItem("abrigaditos-favs",JSON.stringify(f
 
 
 const items=()=>CATALOGO[cat].items;
-const wa = it => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`¡Hola! 🎄 Me interesa el ${it.name} que vi en Abrigaditos. ¿Sigue disponible?`)}`;
+const SITE = "https://jhonatanceballos186-create.github.io/Ropa-navide-a";
+const linkPrenda = it => `${SITE}/p/${it.id}/`;
+const wa = it => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`¡Hola! 🎄 Quiero esta prenda de Abrigaditos:\n\n*${it.name}*\n${linkPrenda(it)}\n\n¿Sigue disponible?`)}`;
 
 function paintTheme(it){
   app.style.setProperty("--bg",it.bg); app.style.setProperty("--ink",it.ink);
@@ -418,6 +420,13 @@ $("#stage").addEventListener("pointerup",e=>{
 Object.entries(CATALOGO).forEach(([c,d])=>d.items.forEach(it=>{
   (isPet(c)?["espalda","panza"]:["espalda"]).forEach(s=>loadImg(src(it,c,s)));
 }));
+/* Abrir directo una prenda si llegan desde su enlace (?p=id) */
+(()=>{const id=new URLSearchParams(location.search).get("p"); if(!id) return;
+  for(const [c,d] of Object.entries(CATALOGO)){const i=d.items.findIndex(x=>x.id===id);
+    if(i>-1){cat=c; idx=i;
+      document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.cat===c));
+      $("#headline").innerHTML=d.titulo.map(t=>`<span>${t}</span>`).join(""); break;}}
+})();
 render(true);
 </script>
 </body>
