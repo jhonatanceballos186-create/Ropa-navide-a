@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Abrigaditos · Navidad</title>
+<meta name="description" content="Buzos y gorros navideños para toda la familia y vestiditos para tu peludito. Piezas únicas. Pide por WhatsApp.">
+<meta name="theme-color" content="#d94b4b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#d94b4b; --ink:#fff; --soft:rgba(255,255,255,.75);
+  --page:#1d1414; --cream:#fff8ef; --dark:#2a1a14;
+  --ease:cubic-bezier(.22,.9,.26,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--page);
+  font-family:"Nunito",system-ui,sans-serif;color:var(--ink);
+  display:flex;justify-content:center;align-items:center;
+  overflow:hidden;
+}
+/* ---------- Tarjeta principal (tipo celular) ---------- */
+.app{
+  position:relative;width:100%;max-width:460px;height:100dvh;
+  background:var(--bg);
+  background-image:radial-gradient(120% 70% at 50% 45%,rgba(255,255,255,.28),rgba(255,255,255,0) 60%),
+                   radial-gradient(140% 60% at 50% 110%,rgba(0,0,0,.18),rgba(0,0,0,0) 60%);
+  transition:background-color .8s var(--ease),color .5s;
+  overflow:hidden;display:flex;flex-direction:column;
+  color:var(--ink);
+}
+@media (min-width:600px){
+  body{background:#141010;background-image:radial-gradient(circle at 50% 40%,#2c2222,#0f0b0b 70%)}
+  .app{height:min(900px,94vh);border-radius:34px;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06)}
+}
+canvas#snow{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:.85}
+
+/* ---------- Cabecera ---------- */
+header{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:16px 18px 6px}
+.logo{display:flex;align-items:center;gap:8px;font-family:"Fredoka";font-weight:700;font-size:19px;letter-spacing:.2px}
+.logo .mark{width:30px;height:30px;border-radius:10px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-size:17px;transition:background .5s,color .8s}
+.icons{display:flex;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--ink) 45%,transparent);background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:transform .2s,background .3s}
+.icon-btn:active{transform:scale(.9)}
+.icon-btn svg{width:18px;height:18px}
+.icon-btn.fav-on svg{fill:currentColor}
+.icon-btn .badge{position:absolute}
+
+/* ---------- Categorías ---------- */
+.tabs{position:relative;z-index:5;display:flex;gap:6px;margin:8px auto 0;padding:4px;border-radius:999px;background:color-mix(in srgb,var(--ink) 14%,transparent)}
+.tab{border:0;background:transparent;color:var(--ink);font:800 14px "Nunito";padding:8px 16px;border-radius:999px;cursor:pointer;opacity:.75;transition:all .35s var(--ease)}
+.tab.on{background:var(--ink);color:var(--bg);opacity:1;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+
+/* ---------- Titular ---------- */
+.headline{position:relative;z-index:5;text-align:center;margin-top:14px;font-family:"Fredoka";font-weight:600;font-size:clamp(26px,7.4vw,34px);line-height:1.05}
+.headline span{display:block}
+
+/* ---------- Escenario del producto ---------- */
+.stage{position:relative;z-index:3;flex:1;min-height:0}
+.product{position:absolute;left:50%;top:46%;width:70%;height:76%;transform:translate(-50%,-50%);perspective:1200px;cursor:pointer}
+.floater{width:100%;height:100%;animation:float 4.5s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-12px) rotate(.6deg)}}
+.card{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s var(--ease)}
+.card.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face.back{transform:rotateY(180deg)}
+.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(0,0,0,.28));user-select:none;-webkit-user-drag:none}
+.shadow{position:absolute;left:50%;bottom:6%;width:52%;height:22px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(0,0,0,.35),rgba(0,0,0,0));animation:shadow 4.5s ease-in-out infinite;z-index:2}
+@keyframes shadow{0%,100%{transform:translateX(-50%) scale(1);opacity:.85}50%{transform:translateX(-50%) scale(.82);opacity:.55}}
+
+/* miniatura siguiente */
+.next{position:absolute;right:10px;bottom:9%;width:64px;height:64px;border:0;background:none;cursor:pointer;z-index:6;display:grid;place-items:center}
+.next img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(0,0,0,.3));transition:transform .3s}
+.next:hover img{transform:scale(1.08) rotate(-4deg)}
+.next .lbl{position:absolute;bottom:-18px;font:800 10px "Nunito";letter-spacing:.6px;text-transform:uppercase;opacity:.8;white-space:nowrap}
+.prev{position:absolute;left:10px;top:47%;transform:translateY(-50%);z-index:6}
+
+.flip{position:absolute;left:14px;bottom:10%;z-index:6;display:flex;align-items:center;gap:6px;border:1.5px solid color-mix(in srgb,var(--ink) 45%,transparent);background:color-mix(in srgb,var(--ink) 10%,transparent);color:var(--ink);font:800 12px "Nunito";padding:8px 12px;border-radius:999px;cursor:pointer;transition:opacity .3s,transform .2s}
+.flip svg{width:15px;height:15px}
+.flip:active{transform:scale(.94)}
+.flip[hidden]{display:none}
+
+.dots{position:absolute;left:50%;bottom:2%;transform:translateX(-50%);display:flex;gap:6px;z-index:6}
+.dots i{width:6px;height:6px;border-radius:9px;background:var(--ink);opacity:.35;transition:all .4s var(--ease)}
+.dots i.on{width:18px;opacity:1}
+
+/* ---------- Info + CTA ---------- */
+.info{position:relative;z-index:5;text-align:center;padding:0 20px}
+.name{font-family:"Fredoka";font-weight:600;font-size:21px}
+.meta{font-weight:700;font-size:13px;opacity:.8;margin-top:2px}
+.meta b{font-weight:800}
+.cta{display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:#fff;color:#1f1512;border:0;text-decoration:none;font:800 15px "Nunito";padding:12px 22px;border-radius:999px;box-shadow:0 10px 24px rgba(0,0,0,.18);transition:transform .2s}
+.cta:active{transform:scale(.95)}
+.cta svg{width:18px;height:18px;color:#25d366}
+.nequi{display:block;margin:10px auto 0;border:0;background:none;color:var(--ink);font:700 12.5px "Nunito";opacity:.85;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+footer{position:relative;z-index:5;display:flex;justify-content:center;gap:18px;padding:12px 0 calc(14px + env(safe-area-inset-bottom));opacity:.8}
+footer a{color:var(--ink)}
+footer svg{width:18px;height:18px}
+
+/* animación del texto */
+.swap-in{animation:swapIn .6s var(--ease) both}
+@keyframes swapIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- Hoja de pago ---------- */
+.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:20;opacity:0;pointer-events:none;transition:opacity .35s}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:21;background:var(--cream);color:var(--dark);border-radius:26px 26px 0 0;padding:22px 22px calc(26px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .45s var(--ease)}
+.open .sheet-bg{opacity:1;pointer-events:auto}
+.open .sheet{transform:none}
+.sheet h3{font-family:"Fredoka";font-weight:600;font-size:21px;margin-bottom:12px}
+.sheet .grab{width:42px;height:5px;border-radius:9px;background:#d8cbbb;margin:-8px auto 14px}
+.step{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid #eadfce}
+.step .n{flex:none;width:28px;height:28px;border-radius:50%;background:#d94b4b;color:#fff;display:grid;place-items:center;font:800 13px "Nunito"}
+.step p{font-size:14px;line-height:1.4}
+.step strong{display:block;font-size:15px}
+.nequi-box{margin-top:6px;padding:10px 12px;border-radius:14px;background:#f1e4f7;color:#4a1d5e;font-weight:800;font-size:14px}
+.sheet .cta{background:#25d366;color:#fff;width:100%;justify-content:center;margin-top:16px}
+.sheet .cta svg{color:#fff}
+
+@media (prefers-reduced-motion:reduce){
+  .floater,.shadow{animation:none}
+}
+@media (max-height:680px){
+  .headline{font-size:24px;margin-top:8px}
+  .cta{margin-top:8px;padding:10px 20px}
+}
+</style>
+</head>
+<body>
+<main class="app" id="app">
+  <canvas id="snow"></canvas>
+
+  <header>
+    <div class="logo"><span class="mark">❄</span>Abrigaditos</div>
+    <div class="icons">
+      <button class="icon-btn" id="favBtn" aria-label="Guardar en favoritos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"/></svg>
+      </button>
+      <button class="icon-btn" id="bagBtn" aria-label="Cómo comprar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab on" data-cat="personas" role="tab">🧑 Personas</button>
+    <button class="tab" data-cat="mascotas" role="tab">🐶 Mascotas</button>
+  </nav>
+
+  <h1 class="headline" id="headline"><span>Abrígate con</span><span>espíritu navideño</span></h1>
+
+  <section class="stage" id="stage">
+    <div class="product" id="product" aria-label="Ver siguiente prenda">
+      <div class="floater"><div class="card" id="card">
+        <div class="face front"><img id="imgFront" alt=""></div>
+        <div class="face back"><img id="imgBack" alt=""></div>
+      </div></div>
+    </div>
+    <div class="shadow"></div>
+    <button class="flip" id="flipBtn" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg>
+      <span id="flipTxt">Ver panza</span>
+    </button>
+    <button class="next" id="nextBtn" aria-label="Siguiente prenda"><img id="nextImg" alt=""><span class="lbl">Siguiente</span></button>
+    <div class="dots" id="dots"></div>
+  </section>
+
+  <div class="info">
+    <div class="name" id="name"></div>
+    <div class="meta" id="meta"></div>
+    <a class="cta" id="cta" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-.7-.3-1.9-.8-3-2.2-.6-.6-.9-1.3-1-1.5-.1-.2 0-.4.1-.5l.4-.4.3-.5v-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.4z"/></svg>
+      ¡Lo quiero!
+    </a>
+    <button class="nequi" id="nequiBtn">También puedes pagar por Nequi</button>
+  </div>
+
+  <footer>
+    <a href="https://wa.me/573183113606" target="_blank" rel="noopener" aria-label="WhatsApp">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+    </a>
+    <span style="font-size:12px;font-weight:700">Piezas únicas · Hechas con cariño 🎄</span>
+  </footer>
+
+  <div class="sheet-bg" id="sheetBg"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Cómo comprar">
+    <div class="grab"></div>
+    <h3>¿Cómo comprar? 🎁</h3>
+    <div class="step"><span class="n">1</span><p><strong>Elige tu prenda</strong>Cada diseño es pieza única, ¡aparta la tuya antes de que se vaya!</p></div>
+    <div class="step"><span class="n">2</span><p><strong>Escríbenos por WhatsApp</strong>Te confirmamos disponibilidad y el envío.</p></div>
+    <div class="step"><span class="n">3</span><div><p><strong>También puedes pagar por Nequi</strong></p>
+      <div class="nequi-box" id="nequiNum">Número Nequi: próximamente</div></div></div>
+    <a class="cta" id="sheetCta" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+  </div>
+</main>
+
+<script>
+/* ======== CONFIGURACIÓN ======== */
+const WHATSAPP = "573183113606";
+const NEQUI = "";            // ← aquí va el número de Nequi cuando lo tengas, ej: "300 123 4567"
+
+/* bg = color de fondo, ink = color del texto (claro u oscuro), price = "" hasta definirlo */
+const CATALOGO = {
+  personas:{
+    titulo:["Abrígate con","espíritu navideño"],
+    items:[
+      {id:"buzo-renos-bastones", name:"Buzo Renos y Bastones", tipo:"Buzo", bg:"#d94b4b", ink:"#ffffff", price:""},
+      {id:"buzo-bebe",           name:"Buzo Renitos Bebé",     tipo:"Buzo bebé", bg:"#a9d6f5", ink:"#1c2b3a", price:""},
+      {id:"buzo-grunon",         name:"Buzo Verde Gruñón",     tipo:"Buzo", bg:"#a8d08d", ink:"#1f2e17", price:""},
+      {id:"gorro-nieve",         name:"Gorro Largo Muñeco de Nieve", tipo:"Gorro de lana", bg:"#e86a6a", ink:"#ffffff", price:""},
+      {id:"buzo-renos-gorro",    name:"Buzo Renos con Gorro",  tipo:"Buzo", bg:"#e9c46a", ink:"#2a1a0c", price:""},
+      {id:"gorro-papanoel",      name:"Gorro Rayitas Papá Noel", tipo:"Gorro de lana", bg:"#f5ead9", ink:"#3a2418", price:""},
+      {id:"gorro-escondido",     name:"Gorro Rayitas Muñequito Escondido", tipo:"Gorro de lana", bg:"#2f6b4f", ink:"#ffffff", price:""},
+      {id:"buzo-papanoel",       name:"Buzo Papá Noel Bordado", tipo:"Buzo", bg:"#fbe3e1", ink:"#4a1717", price:""}
+    ]
+  },
+  mascotas:{
+    titulo:["Peluditos con","estilo navideño"],
+    items:[
+      {id:"mascota-mamanoel", name:"Vestido Mamá Noel",       tipo:"Para mascota", bg:"#f7efe2", ink:"#4a1717", price:"", medidas:""},
+      {id:"mascota-renito",   name:"Vestido Renito Dorado",   tipo:"Para mascota", bg:"#2f6b4f", ink:"#ffffff", price:"", medidas:""},
+      {id:"mascota-grunon",   name:"Vestido Gruñón Verde",    tipo:"Para mascota", bg:"#bfe8d0", ink:"#173323", price:"", medidas:""},
+      {id:"mascota-duende",   name:"Vestido Duende con Osito",tipo:"Para mascota", bg:"#f9c9cf", ink:"#4a1720", price:"", medidas:""},
+      {id:"mascota-galleta",  name:"Vestido Galletita de Jengibre", tipo:"Para mascota", bg:"#cfe6f7", ink:"#1c2b3a", price:"", medidas:""}
+    ]
+  }
+};
+
+/* ======== LÓGICA ======== */
+const $ = s => document.querySelector(s);
+const app=$("#app"), product=$("#product"), card=$("#card"), imgF=$("#imgFront"), imgB=$("#imgBack"),
+      nextBtn=$("#nextBtn"), nextImg=$("#nextImg"), flipBtn=$("#flipBtn"), flipTxt=$("#flipTxt"),
+      nameEl=$("#name"), metaEl=$("#meta"), cta=$("#cta"), dots=$("#dots"), favBtn=$("#favBtn");
+const isPet = cat => cat==="mascotas";
+const src = (it,cat,side="espalda",mini=false) => `img/${it.id}${isPet(cat)?"-"+side:""}${mini?"-mini":""}.webp`;
+let cat="personas", idx=0, busy=false, flipped=false;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let favs=[]; try{favs=JSON.parse(localStorage.getItem("abrigaditos-favs")||"[]")}catch(e){}
+const saveFavs=()=>{try{localStorage.setItem("abrigaditos-favs",JSON.stringify(favs))}catch(e){}};
+
+// Precarga
+Object.entries(CATALOGO).forEach(([c,d])=>d.items.forEach(it=>{
+  (isPet(c)?["espalda","panza"]:["espalda"]).forEach(s=>{const i=new Image();i.src=src(it,c,s)});
+}));
+
+const items=()=>CATALOGO[cat].items;
+const wa = it => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`¡Hola! 🎄 Me interesa el ${it.name} que vi en Abrigaditos. ¿Sigue disponible?`)}`;
+
+function paintTheme(it){
+  app.style.setProperty("--bg",it.bg); app.style.setProperty("--ink",it.ink);
+  app.style.backgroundColor=it.bg;
+  document.querySelector('meta[name=theme-color]').content=it.bg;
+}
+function paintInfo(it){
+  nameEl.textContent=it.name;
+  const parts=[it.tipo,"Talla única","Pieza única"];
+  if(it.medidas) parts.push(it.medidas);
+  metaEl.innerHTML=parts.join(" · ")+(it.price?` · <b>${it.price}</b>`:"");
+  [nameEl,metaEl].forEach(e=>{e.classList.remove("swap-in");void e.offsetWidth;e.classList.add("swap-in")});
+  cta.href=wa(it); $("#sheetCta").href=wa(it);
+  favBtn.classList.toggle("fav-on",favs.includes(it.id));
+  dots.innerHTML=items().map((_,i)=>`<i class="${i===idx?"on":""}"></i>`).join("");
+}
+function paintNext(){
+  const n=items()[(idx+1)%items().length];
+  nextImg.src=src(n,cat,"espalda",true);
+  nextImg.animate([{transform:"scale(.3) rotate(-20deg)",opacity:0},{transform:"scale(1)",opacity:1}],{duration:500,easing:"cubic-bezier(.3,1.5,.5,1)"});
+}
+function setImages(it){
+  imgF.src=src(it,cat,"espalda"); imgF.alt=it.name;
+  if(isPet(cat)){imgB.src=src(it,cat,"panza"); imgB.alt=it.name+" (panza)";}
+  else imgB.removeAttribute("src");
+  flipped=false; card.style.transition="none"; card.classList.remove("flipped"); void card.offsetWidth; card.style.transition="";
+  flipBtn.hidden=!isPet(cat); flipTxt.textContent="Ver panza";
+}
+function render(first){
+  const it=items()[idx];
+  paintTheme(it); setImages(it); paintInfo(it); paintNext();
+}
+
+function go(dir){
+  if(busy) return; busy=true;
+  const list=items(); const newIdx=(idx+dir+list.length)%list.length;
+  const it=list[newIdx];
+  const D = reduce?1:1;
+  // 1) La prenda actual sale
+  const out=product.animate(
+    dir>0?[{transform:"translate(-50%,-50%)",opacity:1},{transform:"translate(-115%,-62%) scale(.55) rotate(-12deg)",opacity:0}]
+         :[{transform:"translate(-50%,-50%)",opacity:1},{transform:"translate(20%,-40%) scale(.55) rotate(12deg)",opacity:0}],
+    {duration:reduce?1:420,easing:"cubic-bezier(.5,0,.75,0)",fill:"forwards"});
+  paintTheme(it);
+  out.onfinish=()=>{
+    idx=newIdx; setImages(it); paintInfo(it);
+    // 2) La nueva entra desde la miniatura (adelante) o desde la izquierda (atrás)
+    const pr=product.getBoundingClientRect(), nr=nextBtn.getBoundingClientRect();
+    const dx=(nr.left+nr.width/2)-(pr.left+pr.width/2), dy=(nr.top+nr.height/2)-(pr.top+pr.height/2);
+    const s=nr.width/pr.width;
+    const from = dir>0 ? `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(${s}) rotate(10deg)`
+                       : `translate(-140%,-50%) scale(.6) rotate(-10deg)`;
+    const inn=product.animate([{transform:from,opacity:dir>0?1:0},{transform:"translate(-50%,-50%) scale(1.04)",opacity:1,offset:.8},{transform:"translate(-50%,-50%)",opacity:1}],
+      {duration:reduce?1:720,easing:"cubic-bezier(.2,.85,.25,1)"});
+    out.cancel();
+    paintNext();
+    inn.onfinish=()=>{busy=false};
+  };
+}
+
+function flip(){
+  if(!isPet(cat)) return;
+  flipped=!flipped; card.classList.toggle("flipped",flipped);
+  flipTxt.textContent=flipped?"Ver espalda":"Ver panza";
+}
+
+function switchCat(c){
+  if(c===cat||busy) return;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.cat===c));
+  busy=true;
+  const st=$("#stage"), hl=$("#headline");
+  const a=st.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateY(20px) scale(.96)"}],{duration:reduce?1:280,fill:"forwards",easing:"ease-in"});
+  hl.animate([{opacity:1},{opacity:0}],{duration:reduce?1:280,fill:"forwards"});
+  a.onfinish=()=>{
+    cat=c; idx=0;
+    hl.innerHTML=CATALOGO[c].titulo.map(t=>`<span>${t}</span>`).join("");
+    render();
+    st.animate([{opacity:0,transform:"translateY(20px) scale(.96)"},{opacity:1,transform:"none"}],{duration:reduce?1:520,easing:"cubic-bezier(.2,.85,.25,1)",fill:"forwards"}).onfinish=()=>busy=false;
+    hl.animate([{opacity:0,transform:"translateY(-8px)"},{opacity:1,transform:"none"}],{duration:reduce?1:520,fill:"forwards"});
+  };
+}
+
+/* Eventos */
+nextBtn.onclick=()=>go(1);
+product.addEventListener("click",()=>{ if(!dragged) go(1) });
+flipBtn.onclick=flip;
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>switchCat(t.dataset.cat));
+favBtn.onclick=()=>{
+  const id=items()[idx].id;
+  favs=favs.includes(id)?favs.filter(f=>f!==id):[...favs,id]; saveFavs();
+  favBtn.classList.toggle("fav-on",favs.includes(id));
+  favBtn.animate([{transform:"scale(1)"},{transform:"scale(1.3)"},{transform:"scale(1)"}],{duration:350});
+};
+const openSheet=()=>app.classList.add("open"), closeSheet=()=>app.classList.remove("open");
+$("#bagBtn").onclick=openSheet; $("#nequiBtn").onclick=openSheet; $("#sheetBg").onclick=closeSheet;
+if(NEQUI) $("#nequiNum").textContent="Nequi: "+NEQUI;
+addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight") go(1); if(e.key==="ArrowLeft") go(-1);
+  if(e.key==="Escape") closeSheet(); if(e.key===" "&&isPet(cat)){e.preventDefault();flip()}
+});
+/* Deslizar con el dedo */
+let sx=0, sy=0, dragged=false;
+$("#stage").addEventListener("pointerdown",e=>{sx=e.clientX;sy=e.clientY;dragged=false});
+$("#stage").addEventListener("pointerup",e=>{
+  const dx=e.clientX-sx, dy=e.clientY-sy;
+  if(Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)){dragged=true; go(dx<0?1:-1); setTimeout(()=>dragged=false,50)}
+});
+
+/* Nieve */
+(()=>{
+  if(reduce) return;
+  const c=$("#snow"), x=c.getContext("2d"); let W,H,f=[];
+  const size=()=>{const r=app.getBoundingClientRect();W=c.width=r.width*devicePixelRatio;H=c.height=r.height*devicePixelRatio;c.style.width=r.width+"px";c.style.height=r.height+"px"};
+  size(); addEventListener("resize",size);
+  for(let i=0;i<45;i++) f.push({x:Math.random(),y:Math.random(),r:Math.random()*2.2+.8,s:Math.random()*.0009+.0004,w:Math.random()*6});
+  (function loop(t){
+    x.clearRect(0,0,W,H); x.fillStyle="rgba(255,255,255,.8)";
+    f.forEach(p=>{p.y+=p.s; if(p.y>1.02){p.y=-.02;p.x=Math.random()}
+      const px=(p.x+Math.sin(t/1600+p.w)*.012)*W; x.beginPath(); x.arc(px,p.y*H,p.r*devicePixelRatio,0,7); x.fill()});
+    requestAnimationFrame(loop);
+  })(0);
+})();
+
+render(true);
+</script>
+</body>
+</html>
