@@ -179,7 +179,7 @@ footer svg{width:18px;height:18px}
   </div>
 
   <footer>
-    <a href="https://wa.me/573183113606" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <a href="https://wa.me/573165261559" target="_blank" rel="noopener" aria-label="WhatsApp">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
     </a>
     <span style="font-size:12px;font-weight:700">Piezas únicas · 📍 Ipiales - Nariño</span>
@@ -199,8 +199,8 @@ footer svg{width:18px;height:18px}
 
 <script>
 /* ======== CONFIGURACIÓN ======== */
-const WHATSAPP = "573183113606";
-const NEQUI = "318 311 3606";            // ← aquí va el número de Nequi cuando lo tengas, ej: "300 123 4567"
+const WHATSAPP = "573165261559";
+const NEQUI = "316 526 1559";
 
 /* bg = color de fondo, ink = color del texto (claro u oscuro), price = "" hasta definirlo */
 const CATALOGO = {
@@ -242,10 +242,6 @@ const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let favs=[]; try{favs=JSON.parse(localStorage.getItem("abrigaditos-favs")||"[]")}catch(e){}
 const saveFavs=()=>{try{localStorage.setItem("abrigaditos-favs",JSON.stringify(favs))}catch(e){}};
 
-// Precarga
-Object.entries(CATALOGO).forEach(([c,d])=>d.items.forEach(it=>{
-  (isPet(c)?["espalda","panza"]:["espalda"]).forEach(s=>{const i=new Image();i.src=src(it,c,s)});
-}));
 
 const items=()=>CATALOGO[cat].items;
 const wa = it => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`¡Hola! 🎄 Me interesa el ${it.name} que vi en Abrigaditos. ¿Sigue disponible?`)}`;
@@ -282,35 +278,61 @@ function render(first){
   paintTheme(it); setImages(it); paintInfo(it); paintNext();
 }
 
-function go(dir){
-  if(busy) return; busy=true;
-  const list=items(); const newIdx=(idx+dir+list.length)%list.length;
-  const it=list[newIdx];
-  const D = reduce?1:1;
-  // 1) La prenda actual sale
-  const out=product.animate(
-    dir>0?[{transform:"translate(-50%,-50%)",opacity:1},{transform:"translate(-115%,-62%) scale(.55) rotate(-12deg)",opacity:0}]
-         :[{transform:"translate(-50%,-50%)",opacity:1},{transform:"translate(20%,-40%) scale(.55) rotate(12deg)",opacity:0}],
-    {duration:reduce?1:420,easing:"cubic-bezier(.5,0,.75,0)",fill:"forwards"});
-  paintTheme(it);
-  out.onfinish=()=>{
-    idx=newIdx; setImages(it); paintInfo(it);
-    // 2) La nueva entra desde la miniatura (adelante) o desde la izquierda (atrás)
-    const pr=product.getBoundingClientRect(), nr=nextBtn.getBoundingClientRect();
-    const dx=(nr.left+nr.width/2)-(pr.left+pr.width/2), dy=(nr.top+nr.height/2)-(pr.top+pr.height/2);
-    const s=nr.width/pr.width;
+/* Carga y decodifica una imagen antes de mostrarla (evita que se vea la prenda anterior) */
+const decoded={};
+function loadImg(url){
+  if(!decoded[url]) decoded[url]=new Promise(res=>{
+    const i=new Image(); i.src=url;
+    (i.decode?i.decode():new Promise((ok,ko)=>{i.onload=ok;i.onerror=ko})).then(res,res);
+  });
+  return decoded[url];
+}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const finished=a=>new Promise(r=>{a.onfinish=r;a.oncancel=r});
+
+let queued=0;
+async function go(dir){
+  if(busy){ queued=dir; return; }   // recuerda el último toque y lo ejecuta al terminar
+  busy=true;
+  const watchdog=setTimeout(()=>{busy=false},4000);   // nunca se queda trabada
+  try{
+    const list=items(); const newIdx=(idx+dir+list.length)%list.length;
+    const it=list[newIdx];
+    // Empieza a cargar las fotos nuevas mientras sale la actual
+    const ready=Promise.all([loadImg(src(it,cat,"espalda")), isPet(cat)?loadImg(src(it,cat,"panza")):null]);
+    // 1) La prenda actual sale
+    const out=product.animate(
+      dir>0?[{transform:"translate(-50%,-50%)",opacity:1},{transform:"translate(-115%,-62%) scale(.55) rotate(-12deg)",opacity:0}]
+           :[{transform:"translate(-50%,-50%)",opacity:1},{transform:"translate(20%,-40%) scale(.55) rotate(12deg)",opacity:0}],
+      {duration:reduce?1:420,easing:"cubic-bezier(.5,0,.75,0)",fill:"forwards"});
+    paintTheme(it);
+    await finished(out);
+    await Promise.race([ready, wait(2500)]);
+    idx=newIdx; setImages(it);
+    // Espera a que la foto nueva esté lista DENTRO de la página (la anterior sigue oculta)
+    await Promise.race([Promise.all([imgF.decode?imgF.decode().catch(()=>{}):null, isPet(cat)&&imgB.decode?imgB.decode().catch(()=>{}):null]), wait(2500)]);
+    paintInfo(it);
+    // 2) La nueva entra desde la miniatura (adelante) o desde la izquierda (atrás).
+    //    Se mide con offset* para que la animación anterior no altere las medidas.
+    const pw=product.offsetWidth, ph=product.offsetHeight;
+    const pcx=product.offsetLeft, pcy=product.offsetTop;            // centro (por el translate -50%)
+    const ncx=nextBtn.offsetLeft+nextBtn.offsetWidth/2, ncy=nextBtn.offsetTop+nextBtn.offsetHeight/2;
+    const dx=ncx-pcx, dy=ncy-pcy, s=Math.max(.12,nextBtn.offsetWidth/pw);
     const from = dir>0 ? `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(${s}) rotate(10deg)`
                        : `translate(-140%,-50%) scale(.6) rotate(-10deg)`;
     const inn=product.animate([{transform:from,opacity:dir>0?1:0},{transform:"translate(-50%,-50%) scale(1.04)",opacity:1,offset:.8},{transform:"translate(-50%,-50%)",opacity:1}],
       {duration:reduce?1:720,easing:"cubic-bezier(.2,.85,.25,1)"});
     out.cancel();
     paintNext();
-    inn.onfinish=()=>{busy=false};
-  };
+    await finished(inn);
+  } finally {
+    clearTimeout(watchdog); busy=false;
+    if(queued){ const d=queued; queued=0; go(d); }
+  }
 }
 
 function flip(){
-  if(!isPet(cat)) return;
+  if(!isPet(cat)||busy) return;
   flipped=!flipped; card.classList.toggle("flipped",flipped);
   flipTxt.textContent=flipped?"Ver espalda":"Ver panza";
 }
@@ -322,10 +344,12 @@ function switchCat(c){
   const st=$("#stage"), hl=$("#headline");
   const a=st.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateY(20px) scale(.96)"}],{duration:reduce?1:280,fill:"forwards",easing:"ease-in"});
   hl.animate([{opacity:1},{opacity:0}],{duration:reduce?1:280,fill:"forwards"});
-  a.onfinish=()=>{
-    cat=c; idx=0;
+  a.onfinish=async()=>{
+    cat=c; idx=0; queued=0;
+    await Promise.race([loadImg(src(items()[0],c,"espalda")), wait(2500)]);
     hl.innerHTML=CATALOGO[c].titulo.map(t=>`<span>${t}</span>`).join("");
     render();
+    await Promise.race([imgF.decode?imgF.decode().catch(()=>{}):null, wait(2500)]);
     st.animate([{opacity:0,transform:"translateY(20px) scale(.96)"},{opacity:1,transform:"none"}],{duration:reduce?1:520,easing:"cubic-bezier(.2,.85,.25,1)",fill:"forwards"}).onfinish=()=>busy=false;
     hl.animate([{opacity:0,transform:"translateY(-8px)"},{opacity:1,transform:"none"}],{duration:reduce?1:520,fill:"forwards"});
   };
@@ -372,6 +396,10 @@ $("#stage").addEventListener("pointerup",e=>{
   })(0);
 })();
 
+// Precarga
+Object.entries(CATALOGO).forEach(([c,d])=>d.items.forEach(it=>{
+  (isPet(c)?["espalda","panza"]:["espalda"]).forEach(s=>loadImg(src(it,c,s)));
+}));
 render(true);
 </script>
 </body>
